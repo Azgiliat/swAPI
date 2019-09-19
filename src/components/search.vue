@@ -1,6 +1,5 @@
 <template>
 <div>
-  <img src="img/star.png">
 </div>
 </template>
 
