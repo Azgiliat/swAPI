@@ -1,0 +1,69 @@
+.header {
+  min-width: 320px;
+  width: 100%;
+  height: 240px;
+}
+
+.header__background {
+  position: relative;
+  margin: 0 auto;
+  width: 100%;
+  height: 100%;
+  background-image: url("./../img/header-back-mobile.jpg");
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+  background-position: center;
+
+  &::before {
+    @include pseudo-element;
+    top: 57px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 212px;
+    height: 50px;
+    background-image: url("./../img/star.png");
+    background-size: contain;
+  }
+
+  &::after {
+    @include pseudo-element;
+    top: 131px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 212px;
+    height: 51px;
+    background-image: url("./../img/wars.png");
+    background-size: contain;
+  }
+}
+
+.header__title {
+  width: 202px;
+  font-family: $main-font;
+  color: #ffffff;
+  text-transform: uppercase;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+  position: absolute;
+  top: 110px;
+  left: 50%;
+  transform: translateX(-50%);
+  letter-spacing: 0.11em;
+}
+@media (min-width: $desktop-width) {
+  .header {
+    height: 33vh;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+
+  .header__background {
+    width: 100%;
+    height: 100%;
+    background-image: url("./../img/header-back.jpg");
+    background-repeat: no-repeat;
+    background-size: auto 100%;
+    background-position: center;
+  }
+}

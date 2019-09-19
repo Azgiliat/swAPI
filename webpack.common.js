@@ -1,10 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
-const {
-  CleanWebpackPlugin
-} = require('clean-webpack-plugin');
 const path = require(`path`);
-
+const ASSET_PATH = process.env.ASSET_PATH || '/';
 
 module.exports = {
   entry: {
@@ -24,11 +21,27 @@ module.exports = {
         test: /\.css$/,
         use: ['vue-style-loader', 'css-loader']
       },
-
+      {
+        test: /\.(woff|woff2)$/,
+        use: {
+          loader: "url-loader",
+          options: {
+            limit: 8192,
+            name: "./fonts/[name].[ext]"
+          }
+        }
+      },
       {
         test: /\.(png|jpg|svg)$/,
-        loader: 'url-loader',
-      },
+        use: {
+          loader: "url-loader",
+          options: {
+            limit: 1024,
+            name: "./img/[name].[ext]",
+            publicPath: "./../"
+          }
+        }
+      }
     ]
   },
   output: {
@@ -40,6 +53,5 @@ module.exports = {
       template: './src/index.html',
     }),
     new VueLoaderPlugin(),
-    new CleanWebpackPlugin(),
   ]
 };

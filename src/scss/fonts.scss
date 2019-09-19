@@ -1,0 +1,12 @@
+@for $i from 3 through 7 {
+  @if $i == 6 {
+    $i: $i + 1;
+  }
+  @font-face {
+    font-family: "Roboto";
+    font-weight: $i * 100;
+    font-style: normal;
+    font-display: swap;
+    src: url("./../fonts/roboto-v20-latin-#{$i * 100}.woff2") format("woff2"), url("./../fonts/roboto-v20-latin-#{$i * 100}.woff") format("woff");
+  }
+}
