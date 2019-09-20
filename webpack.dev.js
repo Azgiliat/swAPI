@@ -10,7 +10,7 @@ module.exports = merge(common, {
         use: [
       'vue-style-loader',
       'css-loader',
-      'sass-loader'],
+      'sass-loader?prependData=@import "./src/scss/style.scss";'],
         }
   ],
   },
