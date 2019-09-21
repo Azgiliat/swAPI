@@ -1,8 +1,8 @@
 <template>
 <div class="container">
-  <loader />
-  <search />
-  <section class="cards main__cards">
+  <loader class="container__loader" v-if="loading" />
+  <search v-if="!loading" />
+  <section v-if="!loading" class="cards main__cards">
     <h2 class="visually-hidden">Characters cards</h2>
     <card v-for="character in $store.state.characters" :key="$store.state.characters.indexOf(character)" />
   </section>
@@ -15,7 +15,9 @@ import card from './card.vue';
 import loader from './loader.vue';
 export default {
   data() {
-    return {}
+    return {
+      loading: true,
+    }
   },
   components: {
     search,
@@ -36,6 +38,7 @@ export default {
         this.$set(this.$store.state, `characters`, data.results);
         this.$set(this.$store.state, `next`, data.next);
         this.$set(this.$store.state, `count`, data.count);
+        setTimeout(() => this.loading = false, 2000);
         console.log(data);
       })
       .catch((error) => console.error(error));
@@ -61,4 +64,15 @@ export default {
 </script>
 
 <style lang="scss">
+.container {
+    width: 100%;
+    padding-left: 7.5%;
+    padding-right: 7.5%;
+}
+.container__loader {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translateX(-50%);
+}
 </style>
