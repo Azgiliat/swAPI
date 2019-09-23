@@ -27,7 +27,8 @@ module.exports = {
           loader: "url-loader",
           options: {
             limit: 8192,
-            name: "./fonts/[name].[ext]"
+            name: "./fonts/[name].[ext]",
+            publicPath: "./../"
           }
         }
       },

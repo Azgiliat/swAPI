@@ -16,7 +16,24 @@ const store = new Vuex.Store({
     addCharacter(state, character) {
       state.characters.push(character);
     },
+    addSpecies(state, character) {
+      character[0].realSpecie = character[1];
+    },
   },
+  actions: {
+    addCharacter({
+      commit,
+      state
+    }, character) {
+      commit(`addCharacter`, state, character);
+    },
+    addSpecies({
+      commit,
+      state
+    }, character) {
+      commit(`addSpecies`, character);
+    },
+  }
 });
 
 new Vue({

@@ -1,27 +1,72 @@
 <template>
-<section class="card cards__card">
-  <h3 class="visually-hidden">Character info</h3>
-  <div class="card__avatar">
-    <span class="card__avatar-text">{{avatar}}</span>
-  </div>
-  <p class="card__name">{{name}}</p>
-  <p class="card__species">{{species}}</p>
-</section>
+<transition name="card" appear>
+  <section class="card cards__card" @click="openPopup">
+    <h3 class="visually-hidden">Character info</h3>
+    <div class="card__avatar">
+      <span class="card__avatar-text">{{info.name[0]}}</span>
+    </div>
+    <p class="card__name">{{info.name}}</p>
+    <p class="card__species">{{info.realSpecie}}</p>
+    <popup v-if="popupActive" :id="id" @closePopup="closePopup" />
+  </section>
+</transition>
 </template>
 
 <script>
+import popup from './popup.vue';
 export default {
   data() {
     return {
-      avatar: `X`,
-      name: `Name`,
-      species: `species`,
+      popupActive: false,
     }
-  }
+  },
+  components: {
+    popup,
+  },
+  computed: {
+    info() {
+      return this.$store.state.characters[this.id];
+    }
+  },
+  props: {
+    id: {
+      type: Number,
+      require: true,
+    },
+  },
+  methods: {
+    closePopup() {
+      this.popupActive = false;
+    },
+    openPopup() {
+      this.popupActive = true;
+    },
+  },
+  created() {
+    //setInterval(() => console.log(this.popupActive), 2000);
+    fetch(this.info.species[0])
+      .then((response) => {
+        if(response.ok) return response.json();
+        else throw (new Error(`Bad response got specie`))
+      })
+      .then((data) => {
+        this.$set(this.info, `realSpecie`, ``);
+        this.$store.dispatch(`addSpecies`, [this.info, data.name]);
+        return data.name;
+      })
+      .catch((error) => console.error(error));
+  },
 }
 </script>
 
 <style lang="scss">
+.card-enter {
+    opacity: 0;
+    transform: translateY(30px);
+}
+.card-enter-active {
+    transition: all 1s;
+}
 .card {
     width: 100%;
     height: 200px;
@@ -51,7 +96,7 @@ export default {
     justify-content: space-around;
     display: flex;
 }
-
+.avatar-text,
 .card__avatar-text {
     font-weight: 500;
     font-size: 48px;

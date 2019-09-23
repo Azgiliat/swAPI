@@ -1,10 +1,10 @@
 <template>
 <div class="container">
-  <loader class="container__loader" v-if="loading" />
-  <search v-if="!loading" />
-  <section v-if="!loading" class="cards main__cards">
+  <loader class="container__loader" v-if="!loaded" />
+  <search v-if="loaded" />
+  <section v-if="loaded" class="cards main__cards">
     <h2 class="visually-hidden">Characters cards</h2>
-    <card v-for="character in $store.state.characters" :key="$store.state.characters.indexOf(character)" />
+    <card v-for="character in $store.state.characters" :key="$store.state.characters.indexOf(character)" :data="character" :id="$store.state.characters.indexOf(character)" />
   </section>
 </div>
 </template>
@@ -17,6 +17,7 @@ export default {
   data() {
     return {
       loading: true,
+      loaded: false,
     }
   },
   components: {
@@ -25,6 +26,7 @@ export default {
     loader,
   },
   created() {
+    let id;
     const URL = `https://swapi.co/api/people/`;
     fetch(URL)
       .then((response) => {
@@ -38,27 +40,32 @@ export default {
         this.$set(this.$store.state, `characters`, data.results);
         this.$set(this.$store.state, `next`, data.next);
         this.$set(this.$store.state, `count`, data.count);
-        setTimeout(() => this.loading = false, 2000);
-        console.log(data);
+        this.loading = false;
       })
       .catch((error) => console.error(error));
-    setTimeout(() => {
-      fetch(URL)
-        .then((response) => {
-          if(response.ok) {
-            return response.json();
-          } else {
-            throw (new Error(`Bad response`))
-          }
-        })
-        .then((data) => {
-          for(let item of data.results) {
-            this.$store.commit(`addCharacter`, item);
-          }
-          console.log(data);
-        })
-        .catch((error) => console.error(error))
-    }, 5000);
+    id = setInterval(() => {
+      if(!this.loading) {
+        this.loaded = true;
+        clearInterval(id);
+      }
+    }, 2000);
+    // setTimeout(() => {
+    //   fetch(URL)
+    //     .then((response) => {
+    //       if(response.ok) {
+    //         return response.json();
+    //       } else {
+    //         throw (new Error(`Bad response`))
+    //       }
+    //     })
+    //     .then((data) => {
+    //       for(let item of data.results) {
+    //         this.$store.commit(`addCharacter`, item);
+    //       }
+    //       console.log(data);
+    //     })
+    //     .catch((error) => console.error(error))
+    // }, 5000);
   },
 }
 </script>
