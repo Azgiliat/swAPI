@@ -43,11 +43,10 @@ export default {
     },
   },
   created() {
-    //setInterval(() => console.log(this.popupActive), 2000);
     fetch(this.info.species[0])
       .then((response) => {
         if(response.ok) return response.json();
-        else throw (new Error(`Bad response got specie`))
+        else throw (new Error(`Bad response for specie`))
       })
       .then((data) => {
         this.$set(this.info, `realSpecie`, ``);
@@ -55,6 +54,22 @@ export default {
         return data.name;
       })
       .catch((error) => console.error(error));
+    this.$set(this.info, 'filmsList', []);
+    for(let film of this.info.films) {
+      fetch(film)
+        .then((response) => {
+          if(response.ok) return response.json();
+          else throw (new Error('Bad response for films'));
+        })
+        .then((data) => {
+          this.$store.dispatch('addFilm', {
+            id: this.id,
+            film: data.title
+          });
+          console.log(data.title);
+        })
+        .catch((error) => console.error(error));
+    }
   },
 }
 </script>

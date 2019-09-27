@@ -20,6 +20,9 @@ const store = new Vuex.Store({
     addSpecies(state, character) {
       character[0].realSpecie = character[1];
     },
+    addFilm(state, data) {
+      state.characters[data.id].filmsList.push(data.film);
+    }
   },
   actions: {
     addCharacter({
@@ -33,6 +36,12 @@ const store = new Vuex.Store({
       state
     }, character) {
       commit(`addSpecies`, character);
+    },
+    addFilm({
+      commit,
+      state
+    }, data) {
+      commit('addFilm', data);
     },
   }
 });

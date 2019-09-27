@@ -1,9 +1,9 @@
 <template>
 <section class="popup card__popup">
-  <div class="popup__avatar avatar">
+  <div class="popup__avatar avatar head">
     <span class="popup__avatar-text avatar-text">{{info.name[0]}}</span>
   </div>
-  <p class="popup__name">{{info.name}}</p>
+  <p class="popup__name head">{{info.name}}</p>
   <p class="popup__icon--birth popup__icon">Birth year</p>
   <p class="popup__birth">{{info.birth_year}}</p>
   <p class="popup__icon--species popup__icon">Spiecies</p>
@@ -13,10 +13,11 @@
   <p class="popup__icon--homeworld popup__icon">Homeworld</p>
   <p class="popup__homeworld">***</p>
   <p class="popup__icon--films popup__icon">Films</p>
-  <div class="films popup__films">
-    <ul>
-    </ul>
-  </div>
+  <ul class="films-list popup__films-list">
+    <li class="films-list__item" v-for="film in info.filmsList" :key="info.filmsList.indexOf(film)">
+      {{film}}
+    </li>
+  </ul>
   <button @click.stop="closePopup" class="close-button popup__close-button" type="button"></button>
 </section>
 </template>
@@ -75,8 +76,10 @@ export default {
     position: fixed;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-template-rows: 120px 50px repeat(5, 50px) auto;
+    grid-template-rows: 120px 50px repeat(3, 50px) auto;
+    grid-template-areas: "head head" ". .";
     grid-auto-rows: auto;
+    align-items: auto;
     width: 100%;
     height: 100%;
     top: 0;
@@ -87,6 +90,18 @@ export default {
     background-color: #191919;
     font-family: $main-font;
     font-weight: 700;
+}
+
+.head {
+    grid-area: head;
+}
+
+.popup__name {
+    margin: 0;
+    padding-left: 24%;
+    padding-top: 6%;
+    font-size: 22px;
+    line-height: 26px;
 }
 
 .popup__avatar {
@@ -157,5 +172,15 @@ export default {
             background-repeat: no-repeat;
         }
     }
+}
+
+.films-list {
+    list-style: none;
+    padding: 0;
+}
+
+.films-list__item {
+    display: block;
+    margin-bottom: 12px;
 }
 </style>
