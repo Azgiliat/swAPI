@@ -1,5 +1,5 @@
 <template>
-<div class="container">
+<div v-scroll="onScrollHandler" class="container">
   <loader class="container__loader" v-if="!loaded" />
   <search v-if="loaded" />
   <section v-if="loaded" class="cards main__cards">
@@ -18,12 +18,47 @@ export default {
     return {
       loading: true,
       loaded: false,
+      needData: true,
     }
   },
   components: {
     search,
     card,
     loader,
+  },
+  computed: {
+    cardHeight() {
+      return this.$el.querySelector(`.card`)
+        .offsetHeight;
+    },
+    headerHeight() {
+      return this.$store.state.headerHeight;
+    },
+  },
+  methods: {
+    onScrollHandler() {
+      if((this.headerHeight + window.scrollY + this.cardHeight * 3 >= this.$el.clientHeight) && this.needData) {
+        this.needData = false;
+        this.loadMoreChars();
+      }
+    },
+    loadMoreChars() {
+      fetch(this.$store.state.next)
+        .then((response) => {
+          if(response.ok) {
+            return response.json();
+          } else {
+            throw (new Error(`Bad response`))
+          }
+        })
+        .then((data) => {
+          for(let item of data.results) {
+            this.$store.dispatch(`addCharacter`, item);
+          }
+          this.needData = true;
+        })
+        .catch((error) => console.error(error));
+    },
   },
   created() {
     let id;
@@ -49,23 +84,6 @@ export default {
         clearInterval(id);
       }
     }, 2000);
-    // setTimeout(() => {
-    //   fetch(URL)
-    //     .then((response) => {
-    //       if(response.ok) {
-    //         return response.json();
-    //       } else {
-    //         throw (new Error(`Bad response`))
-    //       }
-    //     })
-    //     .then((data) => {
-    //       for(let item of data.results) {
-    //         this.$store.commit(`addCharacter`, item);
-    //       }
-    //       console.log(data);
-    //     })
-    //     .catch((error) => console.error(error))
-    // }, 5000);
   },
 }
 </script>

@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import scroll from './directives/scroll.js';
 import style from './scss/style.scss';
 import App from './components/App.vue';
 
@@ -7,7 +8,7 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
-    showedCounter: 0,
+    headerHeight: document.querySelector('header').clientHeight,
   },
   mutations: {
     showedCounterIncrement(state) {
@@ -25,7 +26,7 @@ const store = new Vuex.Store({
       commit,
       state
     }, character) {
-      commit(`addCharacter`, state, character);
+      commit(`addCharacter`, character);
     },
     addSpecies({
       commit,

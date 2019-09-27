@@ -72,7 +72,7 @@ export default {
     }
 }
 .popup {
-    position: absolute;
+    position: fixed;
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 120px 50px repeat(5, 50px) auto;
