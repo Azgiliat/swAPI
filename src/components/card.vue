@@ -25,8 +25,7 @@ export default {
   },
   computed: {
     info() {
-      if(this.$store.state.search) return this.$store.state.searchCharacters[this.id]
-      else return this.$store.state.characters[this.id];
+      return this.$store.state.characters[this.id];
     }
   },
   props: {

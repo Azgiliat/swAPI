@@ -2,15 +2,10 @@
 <div v-scroll="onScrollHandler" class="container">
   <loader class="container__loader" v-if="!loaded" />
   <search v-show="loaded" />
-  <div v-if="loaded">
-    <section v-if="!$store.state.search" class="cards main__cards">
-      <h2 class="visually-hidden">Characters cards</h2>
-      <card v-for="character in $store.state.characters" :key="$store.state.characters.indexOf(character)" :data="character" :id="$store.state.characters.indexOf(character)" />
-    </section>
-    <section v-else class="cards main__cards">
-      <card v-for="character in $store.state.searchCharacters" :key="$store.state.searchCharacters.indexOf(character) + '-search'" :data="character" :id="$store.state.searchCharacters.indexOf(character)" />
-    </section>
-  </div>
+  <section v-if="loaded" class="cards main__cards">
+    <h2 class="visually-hidden">Characters cards</h2>
+    <card v-for="character in $store.state.characters" :key="$store.state.characters.indexOf(character)" :data="character" :id="$store.state.characters.indexOf(character)" />
+  </section>
 </div>
 </template>
 
@@ -99,6 +94,9 @@ export default {
       if(this.searchStatus) {
         this.loading = true;
         this.loaded = false;
+        this.$store.commit('addSearchResults', {
+          results: []
+        });
         fetch(this.$store.state.currentSearchURL)
           .then((response) => {
             if(response.ok) {
