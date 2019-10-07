@@ -25,7 +25,8 @@ export default {
   },
   computed: {
     info() {
-      return this.$store.state.characters[this.id];
+      if(this.$store.state.search) return this.$store.state.searchCharacters[this.id]
+      else return this.$store.state.characters[this.id];
     }
   },
   props: {
@@ -66,7 +67,6 @@ export default {
             id: this.id,
             film: data.title
           });
-          console.log(data.title);
         })
         .catch((error) => console.error(error));
     }

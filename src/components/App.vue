@@ -1,11 +1,16 @@
 <template>
 <div v-scroll="onScrollHandler" class="container">
   <loader class="container__loader" v-if="!loaded" />
-  <search v-if="loaded" />
-  <section v-if="loaded" class="cards main__cards">
-    <h2 class="visually-hidden">Characters cards</h2>
-    <card v-for="character in $store.state.characters" :key="$store.state.characters.indexOf(character)" :data="character" :id="$store.state.characters.indexOf(character)" />
-  </section>
+  <search v-show="loaded" />
+  <div v-if="loaded">
+    <section v-if="!$store.state.search" class="cards main__cards">
+      <h2 class="visually-hidden">Characters cards</h2>
+      <card v-for="character in $store.state.characters" :key="$store.state.characters.indexOf(character)" :data="character" :id="$store.state.characters.indexOf(character)" />
+    </section>
+    <section v-else class="cards main__cards">
+      <card v-for="character in $store.state.searchCharacters" :key="$store.state.searchCharacters.indexOf(character) + '-search'" :data="character" :id="$store.state.searchCharacters.indexOf(character)" />
+    </section>
+  </div>
 </div>
 </template>
 
@@ -34,6 +39,9 @@ export default {
     headerHeight() {
       return this.$store.state.headerHeight;
     },
+    searchStatus() {
+      return this.$store.state.currentSearchURL;
+    }
   },
   methods: {
     onScrollHandler() {
@@ -84,6 +92,36 @@ export default {
         clearInterval(id);
       }
     }, 2000);
+  },
+  watch: {
+    searchStatus() {
+      let searchId;
+      if(this.searchStatus) {
+        this.loading = true;
+        this.loaded = false;
+        fetch(this.$store.state.currentSearchURL)
+          .then((response) => {
+            if(response.ok) {
+              return response.json();
+            } else {
+              throw (new Error('Bad response for search'))
+            }
+          })
+          .then((data) => {
+            this.$store.commit('addSearchResults', {
+              results: data.results
+            });
+            this.loading = false;
+          })
+          .catch((error) => console.error(error));
+        searchId = setInterval(() => {
+          if(!this.loading) {
+            this.loaded = true;
+            clearInterval(searchId);
+          }
+        }, 2000);
+      } else console.log('stop search');
+    },
   },
 }
 </script>

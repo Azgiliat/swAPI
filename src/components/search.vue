@@ -1,6 +1,6 @@
 <template>
 <div class=" search main__search ">
-  <input type=" text" class="search__input" placeholder="Search by name" v-model="inputData">
+  <input type="text" class="search__input" placeholder="Search by name" v-model="inputData" @input="startDebounce">
 </div>
 </template>
 
@@ -10,6 +10,18 @@ export default {
     return {
       inputData: '',
     }
+  },
+  methods: {
+    startDebounce() {
+      const store = this.$store;
+      this.inputData !== '' ? store.commit('toggleSearch', {
+        flag: true,
+        searchTag: this.inputData
+      }) : store.commit('toggleSearch', {
+        flag: false,
+        searchTag: ''
+      });
+    },
   },
 }
 </script>

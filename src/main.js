@@ -9,11 +9,13 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     headerHeight: document.querySelector('header').clientHeight,
+    searchCharacters: [],
+    searchNext: '',
+    searchURLBase: 'https://swapi.co/api/people/?search=',
+    currentSearchURL: '',
+    search: false,
   },
   mutations: {
-    showedCounterIncrement(state) {
-      state.showedCounter++;
-    },
     addCharacter(state, character) {
       state.characters.push(character);
     },
@@ -22,6 +24,13 @@ const store = new Vuex.Store({
     },
     addFilm(state, data) {
       state.characters[data.id].filmsList.push(data.film);
+    },
+    toggleSearch(state, amount) {
+      amount.flag ? state.search = true : state.search = false;
+      state.currentSearchURL = state.searchURLBase + amount.searchTag;
+    },
+    addSearchResults(state, amount) {
+      state.searchCharacters = amount.results;
     }
   },
   actions: {
