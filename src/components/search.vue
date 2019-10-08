@@ -11,15 +11,28 @@ export default {
       inputData: '',
     }
   },
+  computed: {
+    searchURL() {
+      return this.$store.state.searchURL;
+    }
+  },
+  watch: {
+    searchURL() {
+      this.$el.querySelector('input')
+        .focus();
+    }
+  },
   methods: {
     startDebounce() {
       const store = this.$store;
       this.inputData !== '' ? store.commit('toggleSearch', {
         flag: true,
-        searchTag: this.inputData
+        searchTag: this.inputData,
+        lastInput: Date.now(),
       }) : store.commit('toggleSearch', {
         flag: false,
-        searchTag: ''
+        searchTag: '',
+        lastInput: null,
       });
     },
   },

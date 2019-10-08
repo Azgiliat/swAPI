@@ -1,7 +1,7 @@
 <template>
 <div v-scroll="onScrollHandler" class="container">
   <loader class="container__loader" v-if="!loaded" />
-  <search v-show="loaded" />
+  <search v-show="startedLoading" />
   <section v-if="loaded" class="cards main__cards">
     <h2 class="visually-hidden">Characters cards</h2>
     <card v-for="character in $store.state.characters" :key="$store.state.characters.indexOf(character)" :data="character" :id="$store.state.characters.indexOf(character)" />
@@ -16,9 +16,12 @@ import loader from './loader.vue';
 export default {
   data() {
     return {
+      startedLoading: false,
       loading: true,
       loaded: false,
       needData: true,
+      debounceTimer: 2000,
+      debounceId: null,
     }
   },
   components: {
@@ -35,6 +38,9 @@ export default {
       return this.$store.state.headerHeight;
     },
     searchStatus() {
+      return this.$store.state.search;
+    },
+    searchURL() {
       return this.$store.state.currentSearchURL;
     }
   },
@@ -62,6 +68,41 @@ export default {
         })
         .catch((error) => console.error(error));
     },
+    loadSearch() {
+      let searchId;
+      if(this.searchStatus) {
+        this.lastDebounce = Date.now();
+        this.loading = true;
+        this.loaded = false;
+        this.$store.dispatch('addSearchResults', {
+          results: []
+        });
+        console.log(this.$store.state.currentSearchURL);
+        console.log(this.$store.state.characters);
+        fetch(this.$store.state.currentSearchURL)
+          .then((response) => {
+            if(response.ok) {
+              return response.json();
+            } else {
+              throw (new Error('Bad response for search'))
+            }
+          })
+          .then((data) => {
+            console.log(data);
+            this.$store.dispatch('addSearchResults', {
+              results: data.results
+            });
+            this.loading = false;
+          })
+          .catch((error) => console.error(error));
+        searchId = setInterval(() => {
+          if(!this.loading) {
+            this.loaded = true;
+            clearInterval(searchId);
+          }
+        }, 2000);
+      } else console.log('stop search');
+    },
   },
   created() {
     let id;
@@ -84,41 +125,21 @@ export default {
     id = setInterval(() => {
       if(!this.loading) {
         this.loaded = true;
+        this.startedLoading = true;
         clearInterval(id);
       }
     }, 2000);
   },
   watch: {
-    searchStatus() {
-      let searchId;
+    searchURL() {
       if(this.searchStatus) {
-        this.loading = true;
-        this.loaded = false;
-        this.$store.commit('addSearchResults', {
-          results: []
-        });
-        fetch(this.$store.state.currentSearchURL)
-          .then((response) => {
-            if(response.ok) {
-              return response.json();
-            } else {
-              throw (new Error('Bad response for search'))
-            }
-          })
-          .then((data) => {
-            this.$store.commit('addSearchResults', {
-              results: data.results
-            });
-            this.loading = false;
-          })
-          .catch((error) => console.error(error));
-        searchId = setInterval(() => {
-          if(!this.loading) {
-            this.loaded = true;
-            clearInterval(searchId);
-          }
-        }, 2000);
-      } else console.log('stop search');
+        clearTimeout(this.debounceId);
+        this.debounceId = setTimeout(() => {
+          this.loadSearch();
+        }, this.debounceTimer);
+      } else {
+        clearTimeout(this.debounceId);
+      }
     },
   },
 }

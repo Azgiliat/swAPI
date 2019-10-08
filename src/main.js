@@ -14,6 +14,7 @@ const store = new Vuex.Store({
     searchURLBase: 'https://swapi.co/api/people/?search=',
     currentSearchURL: '',
     search: false,
+    lastInput: null,
   },
   mutations: {
     addCharacter(state, character) {
@@ -28,9 +29,10 @@ const store = new Vuex.Store({
     toggleSearch(state, amount) {
       amount.flag ? state.search = true : state.search = false;
       state.currentSearchURL = state.searchURLBase + amount.searchTag;
+      state.lastInput = amount.lastInput;
     },
     addSearchResults(state, amount) {
-      state.searchCharacters = amount.results;
+      state.characters = amount.results;
     }
   },
   actions: {
@@ -52,6 +54,9 @@ const store = new Vuex.Store({
     }, data) {
       commit('addFilm', data);
     },
+    addSearchResults({commit, state}, amount) {
+      commit('addSearchResults', amount);
+    }
   }
 });
 
