@@ -11,17 +11,6 @@ export default {
       inputData: '',
     }
   },
-  computed: {
-    searchURL() {
-      return this.$store.state.searchURL;
-    }
-  },
-  watch: {
-    searchURL() {
-      this.$el.querySelector('input')
-        .focus();
-    }
-  },
   methods: {
     startDebounce() {
       const store = this.$store;

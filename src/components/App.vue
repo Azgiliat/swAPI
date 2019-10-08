@@ -130,6 +130,10 @@ export default {
       }
     }, 2000);
   },
+  updated() {
+    this.$el.querySelector('input')
+      .focus();
+  },
   watch: {
     searchURL() {
       if(this.searchStatus) {
