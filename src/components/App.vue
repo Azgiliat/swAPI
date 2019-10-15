@@ -19,8 +19,9 @@ export default {
       startedLoading: false,
       loading: true,
       loaded: false,
-      needData: true,
-      debounceTimer: 2000,
+      needData: true, // Необходимо чтобы при скролле отправлял только
+      // один запрос
+      debounceTimer: 1000,
       debounceId: null,
     }
   },
@@ -46,7 +47,7 @@ export default {
   },
   methods: {
     onScrollHandler() {
-      if((this.headerHeight + window.scrollY + this.cardHeight * 3 >= this.$el.clientHeight) && this.needData) {
+      if((this.headerHeight + window.scrollY + this.cardHeight * 3 >= this.$el.clientHeight) && this.needData && (this.$store.state.next !== null)) {
         this.needData = false;
         this.loadMoreChars();
       }
@@ -65,6 +66,7 @@ export default {
             this.$store.dispatch(`addCharacter`, item);
           }
           this.needData = true;
+          this.$store.dispatch('updateNextPage', data.next);
         })
         .catch((error) => console.error(error));
     },
@@ -77,8 +79,6 @@ export default {
         this.$store.dispatch('addSearchResults', {
           results: []
         });
-        console.log(this.$store.state.currentSearchURL);
-        console.log(this.$store.state.characters);
         fetch(this.$store.state.currentSearchURL)
           .then((response) => {
             if(response.ok) {
@@ -88,10 +88,10 @@ export default {
             }
           })
           .then((data) => {
-            console.log(data);
             this.$store.dispatch('addSearchResults', {
               results: data.results
             });
+            this.$store.dispatch('updateNextPage', data.next);
             this.loading = false;
           })
           .catch((error) => console.error(error));
@@ -119,6 +119,9 @@ export default {
         this.$set(this.$store.state, `characters`, data.results);
         this.$set(this.$store.state, `next`, data.next);
         this.$set(this.$store.state, `count`, data.count);
+        this.$store.commit('createLandingArray', {
+          landingArray: data.results
+        });
         this.loading = false;
       })
       .catch((error) => console.error(error));
@@ -143,6 +146,9 @@ export default {
         }, this.debounceTimer);
       } else {
         clearTimeout(this.debounceId);
+        this.$store.commit('addSearchResults', {
+          results: this.$store.state.landingArray
+        });
       }
     },
   },
@@ -160,5 +166,19 @@ export default {
     top: 40%;
     left: 50%;
     transform: translateX(-50%);
+}
+
+.cards {
+    @media(min-width: $desktop-width) {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+}
+
+.card {
+    @media(min-width: $desktop-width) {
+        width: 45%;
+    }
 }
 </style>

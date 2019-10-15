@@ -1,6 +1,6 @@
 <template>
 <section class="popup card__popup">
-  <div class="popup__avatar avatar head">
+  <div class="popup__avatar avatar head" :style=" {backgroundColor: color}">
     <span class="popup__avatar-text avatar-text">{{info.name[0]}}</span>
   </div>
   <p class="popup__name head">{{info.name}}</p>
@@ -30,13 +30,20 @@ export default {
   computed: {
     info() {
       return this.$store.state.characters[this.id];
-    }
+    },
   },
   props: {
     id: {
       type: Number,
       require: true,
     },
+    color: {
+      type: String,
+      require: false,
+    }
+  },
+  mounted() {
+    console.log(this.color);
   },
   methods: {
     closePopup(evt) {
@@ -90,6 +97,15 @@ export default {
     background-color: #191919;
     font-family: $main-font;
     font-weight: 700;
+
+    @media(min-width: $desktop-width) {
+        width: 60%;
+        height: auto;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%) translateY(-70%);
+        grid-template-rows: repeat(5, auto) auto;
+    }
 }
 
 .head {

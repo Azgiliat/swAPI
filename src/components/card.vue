@@ -2,12 +2,12 @@
 <transition name="card" appear>
   <section class="card cards__card" @click="openPopup">
     <h3 class="visually-hidden">Character info</h3>
-    <div class="card__avatar">
+    <div class="card__avatar" :style="{backgroundColor : color}">
       <span class="card__avatar-text">{{info.name[0]}}</span>
     </div>
     <p class="card__name">{{info.name}}</p>
     <p class="card__species">{{info.realSpecie}}</p>
-    <popup v-if="popupActive" :id="id" @closePopup="closePopup" />
+    <popup v-if="popupActive" :id="id" @closePopup="closePopup" v-bind:color="color" />
   </section>
 </transition>
 </template>
@@ -26,7 +26,13 @@ export default {
   computed: {
     info() {
       return this.$store.state.characters[this.id];
-    }
+    },
+    color() {
+      return '#' + Math.round(Math.random() * 255)
+        .toString(16) + Math.round(Math.random() * 255)
+        .toString(16) + Math.round(Math.random() * 255)
+        .toString(16);
+    },
   },
   props: {
     id: {

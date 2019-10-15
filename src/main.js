@@ -15,6 +15,7 @@ const store = new Vuex.Store({
     currentSearchURL: '',
     search: false,
     lastInput: null,
+    landingArray: [],
   },
   mutations: {
     addCharacter(state, character) {
@@ -33,7 +34,13 @@ const store = new Vuex.Store({
     },
     addSearchResults(state, amount) {
       state.characters = amount.results;
-    }
+    },
+    createLandingArray(state, amount) {
+      state.landingArray = amount.landingArray;
+    },
+    updateNextPage(state, amount) {
+      state.next = amount;
+    },
   },
   actions: {
     addCharacter({
@@ -56,7 +63,10 @@ const store = new Vuex.Store({
     },
     addSearchResults({commit, state}, amount) {
       commit('addSearchResults', amount);
-    }
+    },
+    updateNextPage({commit, state}, amount) {
+      commit('updateNextPage', amount);
+    },
   }
 });
 
